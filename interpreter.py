@@ -100,6 +100,8 @@ class Interpreter:
                 self.ip = next_pos
         next_pos = self.move(self.ip, self.dir)
         oor = self.out_of_range(next_pos, 0,0,len(self.code),len(self.code[0]))
+        if oor:
+            self.is_running = False
         #print(next_pos)
         if not oor:
             if not self.is_colliding(next_pos, self.code):
@@ -114,6 +116,7 @@ class Interpreter:
         newcode = self.reverse_array_operation(newcode)
         for row in newcode:
             print(*row, sep='')
+        print("\n")
         #print(self.code)
                     
     def find_ip_start(self,code):
@@ -154,9 +157,9 @@ class Interpreter:
             self.ip_tick()
             
             #print(self.code[self.ip[0]][self.ip[1]], self.ip, self.dir, self.grav, self.stack)
-    def util_popstack(self):
+    def util_popstack(self, default=0):
         if len(self.stack) <= 0:
-            return 0
+            return default
         return self.stack.pop()
     def util_peekstack(self, val):
         if len(self.stack) <= 0 or len(self.stack) < val - 1:
@@ -167,7 +170,7 @@ class Interpreter:
     def move(self, arr1, arr2):
         return [arr1[0]+arr2[0],arr1[1]+arr2[1]]
     def do_pop(self):
-        self.util_pop_stack()
+        self.util_popstack()
     def do_dup(self):
         val = self.util_peekstack(-1)
         self.stack.append(val)
@@ -187,12 +190,12 @@ class Interpreter:
         b = self.util_popstack()
         self.stack.append( b - a)
     def do_mul(self):
-        self.stack.append(self.util_popstack() * self.util_popstack())
+        self.stack.append(self.util_popstack() * self.util_popstack(default=1))
     def do_div(self):
         a = self.util_popstack()
         if a  == 0:
             raise ZeroDivisionError("Operand A is 0")
-        b = self.util_popstack()
+        b = self.util_popstack(default=1)
         self.stack.append( b // a)
     def do_mod(self):
         a = self.util_popstack()
