@@ -12,7 +12,7 @@ class Interpreter:
         self.is_running = False
         self.code = []
         self.in_pipe = False
-        self.pipechars = "_|^v<>"
+        self.pipechars = "^v<>"
         self.commands = {
             "+": self.do_add,
             "-": self.do_sub,
@@ -116,7 +116,7 @@ class Interpreter:
         newcode = self.reverse_array_operation(newcode)
         for row in newcode:
             print(*row, sep='')
-        print("\n")
+        #print("\n")
         #print(self.code)
                     
     def find_ip_start(self,code):
@@ -156,7 +156,7 @@ class Interpreter:
             #self.print_visual()
             self.ip_tick()
             
-            #print(self.code[self.ip[0]][self.ip[1]], self.ip, self.dir, self.grav, self.stack)
+            #print(self.code[self.ip[0]][self.ip[1]], self.ip, self.dir, self.grav, self.stack, self.register)
     def util_popstack(self, default=0):
         if len(self.stack) <= 0:
             return default
@@ -218,7 +218,7 @@ class Interpreter:
     def do_siz(self):
         self.stack.append(len(self.stack))
     def do_jmp(self):
-        if self.util_popstack() == 0:
+        if self.register == 0:
             self.ip_tick()
         else:
             return
